@@ -32,6 +32,12 @@ const defaultOptions: Options = {
   externalLinkIcon: true,
 }
 
+// 添加路径简化辅助函数
+function simplifyRelativePath(path: string): string {
+  // 将连续的上级目录引用转换为当前目录
+  return path.replace(/^(\.\.\/)+/, "./")
+}
+
 export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) => {
   const opts = { ...defaultOptions, ...userOpts }
   return {
@@ -152,8 +158,13 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                     dest,
                     transformOptions,
                   )
+
+                  // 新增路径简化处理
+                  dest = simplifyRelativePath(dest) as RelativeURL
+
                   node.properties.src = dest
                 }
+
               }
             })
 
