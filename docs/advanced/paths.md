@@ -1,51 +1,51 @@
 ---
-title: Paths in Quartz
+title: Quartz 中的路径
 ---
 
-Paths are pretty complex to reason about because, especially for a static site generator, they can come from so many places.
+路径相当复杂,尤其对于静态站点生成器来说,因为它们可能来自很多地方。
 
-A full file path to a piece of content? Also a path. What about a slug for a piece of content? Yet another path.
+一个内容的完整文件路径?也是一个路径。内容的 slug 呢?又是另一个路径。
 
-It would be silly to type these all as `string` and call it a day as it's pretty common to accidentally mistake one type of path for another. Unfortunately, TypeScript does not have [nominal types](https://en.wikipedia.org/wiki/Nominal_type_system) for type aliases meaning even if you made custom types of a server-side slug or a client-slug slug, you can still accidentally assign one to another and TypeScript wouldn't catch it.
+将这些都简单地定义为 `string` 类型并不明智,因为很容易不小心把一种路径类型误认为另一种。不幸的是,TypeScript 对类型别名没有[名义类型](https://en.wikipedia.org/wiki/Nominal_type_system),这意味着即使你为服务器端 slug 或客户端 slug 创建了自定义类型,你仍然可以不小心将一个分配给另一个,而 TypeScript 不会捕获到。
 
-Luckily, we can mimic nominal typing using [brands](https://www.typescriptlang.org/play#example/nominal-typing).
+幸运的是,我们可以使用[品牌](https://www.typescriptlang.org/play#example/nominal-typing)来模拟名义类型。
 
 ```typescript
-// instead of
+// 不要这样做
 type FullSlug = string
 
-// we do
+// 而是这样做
 type FullSlug = string & { __brand: "full" }
 
-// that way, the following will fail typechecking
+// 这样,以下代码将无法通过类型检查
 const slug: FullSlug = "some random string"
 ```
 
-While this prevents most typing mistakes _within_ our nominal typing system (e.g. mistaking a server slug for a client slug), it doesn't prevent us from _accidentally_ mistaking a string for a client slug when we forcibly cast it.
+虽然这可以防止在我们的名义类型系统_内部_出现大多数类型错误(例如,将服务器 slug 误认为客户端 slug),但它不能防止我们在强制转换时_意外地_将字符串误认为客户端 slug。
 
-Thus, we still need to be careful when casting from a string to one of these nominal types in the 'entrypoints', illustrated with hexagon shapes in the diagram below.
+因此,我们仍然需要在"入口点"处小心将字符串转换为这些名义类型之一,在下图中用六边形形状表示。
 
-The following diagram draws the relationships between all the path sources, nominal path types, and what functions in `quartz/path.ts` convert between them.
+下图展示了所有路径来源、名义路径类型以及 `quartz/path.ts` 中哪些函数在它们之间进行转换的关系。
 
 ```mermaid
 graph LR
-    Browser{{Browser}} --> Window{{Body}} & LinkElement{{Link Element}}
-    Window --"getFullSlug()"--> FullSlug[Full Slug]
-    LinkElement --".href"--> Relative[Relative URL]
-    FullSlug --"simplifySlug()" --> SimpleSlug[Simple Slug]
+    Browser{{浏览器}} --> Window{{Body}} & LinkElement{{链接元素}}
+    Window --"getFullSlug()"--> FullSlug[完整 Slug]
+    LinkElement --".href"--> Relative[相对 URL]
+    FullSlug --"simplifySlug()" --> SimpleSlug[简单 Slug]
     SimpleSlug --"pathToRoot()"--> Relative
     SimpleSlug --"resolveRelative()" --> Relative
-    MD{{Markdown File}} --> FilePath{{File Path}} & Links[Markdown links]
+    MD{{Markdown 文件}} --> FilePath{{文件路径}} & Links[Markdown 链接]
     Links --"transformLink()"--> Relative
-    FilePath --"slugifyFilePath()"--> FullSlug[Full Slug]
+    FilePath --"slugifyFilePath()"--> FullSlug[完整 Slug]
     style FullSlug stroke-width:4px
 ```
 
-Here are the main types of slugs with a rough description of each type of path:
+以下是主要 slug 类型的粗略描述:
 
-- `FilePath`: a real file path to a file on disk. Cannot be relative and must have a file extension.
-- `FullSlug`: cannot be relative and may not have leading or trailing slashes. It can have `index` as it's last segment. Use this wherever possible is it's the most 'general' interpretation of a slug.
-- `SimpleSlug`: cannot be relative and shouldn't have `/index` as an ending or a file extension. It _can_ however have a trailing slash to indicate a folder path.
-- `RelativeURL`: must start with `.` or `..` to indicate it's a relative URL. Shouldn't have `/index` as an ending or a file extension but can contain a trailing slash.
+- `FilePath`: 磁盘上文件的真实文件路径。不能是相对路径,必须有文件扩展名。
+- `FullSlug`: 不能是相对路径,不能有前导或尾随斜杠。它可以有 `index` 作为最后一段。在任何可能的情况下都使用这个,因为它是对 slug 最"通用"的解释。
+- `SimpleSlug`: 不能是相对路径,不应该有 `/index` 作为结尾或文件扩展名。但是它_可以_有一个尾随斜杠来表示文件夹路径。
+- `RelativeURL`: 必须以 `.` 或 `..` 开头以表示它是相对 URL。不应该有 `/index` 作为结尾或文件扩展名,但可以包含尾随斜杠。
 
-To get a clearer picture of how these relate to each other, take a look at the path tests in `quartz/util/path.test.ts`.
+要更清楚地了解它们之间的关系,请查看 `quartz/util/path.test.ts` 中的路径测试。

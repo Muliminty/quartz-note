@@ -1,52 +1,52 @@
 ---
-title: Architecture
+title: 架构
 ---
 
-Quartz is a static site generator. How does it work?
+Quartz 是一个静态站点生成器。它是如何工作的?
 
-This question is best answered by tracing what happens when a user (you!) runs `npx quartz build` in the command line:
+这个问题最好通过追踪当用户(你!)在命令行运行 `npx quartz build` 时发生的事情来回答:
 
-## On the server
+## 在服务器端
 
-1. After running `npx quartz build`, npm will look at `package.json` to find the `bin` entry for `quartz` which points at `./quartz/bootstrap-cli.mjs`.
-2. This file has a [shebang](<https://en.wikipedia.org/wiki/Shebang_(Unix)>) line at the top which tells npm to execute it using Node.
-3. `bootstrap-cli.mjs` is responsible for a few things:
-   1. Parsing the command-line arguments using [yargs](http://yargs.js.org/).
-   2. Transpiling and bundling the rest of Quartz (which is in Typescript) to regular JavaScript using [esbuild](https://esbuild.github.io/). The `esbuild` configuration here is slightly special as it also handles `.scss` file imports using [esbuild-sass-plugin v2](https://www.npmjs.com/package/esbuild-sass-plugin). Additionally, we bundle 'inline' client-side scripts (any `.inline.ts` file) that components declare using a custom `esbuild` plugin that runs another instance of `esbuild` which bundles for the browser instead of `node`. Modules of both types are imported as plain text.
-   3. Running the local preview server if `--serve` is set. This starts two servers:
-      1. A WebSocket server on port 3001 to handle hot-reload signals. This tracks all inbound connections and sends a 'rebuild' message a server-side change is detected (either content or configuration).
-      2. An HTTP file-server on a user defined port (normally 8080) to serve the actual website files.
-   4. If the `--serve` flag is set, it also starts a file watcher to detect source-code changes (e.g. anything that is `.ts`, `.tsx`, `.scss`, or packager files). On a change, we rebuild the module (step 2 above) using esbuild's [rebuild API](https://esbuild.github.io/api/#rebuild) which drastically reduces the build times.
-   5. After transpiling the main Quartz build module (`quartz/build.ts`), we write it to a cache file `.quartz-cache/transpiled-build.mjs` and then dynamically import this using `await import(cacheFile)`. However, we need to be pretty smart about how to bust Node's [import cache](https://github.com/nodejs/modules/issues/307) so we add a random query string to fake Node into thinking it's a new module. This does, however, cause memory leaks so we just hope that the user doesn't hot-reload their configuration too many times in a single session :)) (it leaks about ~350kB memory on each reload). After importing the module, we then invoke it, passing in the command line arguments we parsed earlier along with a callback function to signal the client to refresh.
-4. In `build.ts`, we start by installing source map support manually to account for the query string cache busting hack we introduced earlier. Then, we start processing content:
-   1. Clean the output directory.
-   2. Recursively glob all files in the `content` folder, respecting the `.gitignore`.
-   3. Parse the Markdown files.
-      1. Quartz detects the number of threads available and chooses to spawn worker threads if there are >128 pieces of content to parse (rough heuristic). If it needs to spawn workers, it will invoke esbuild again to transpile the worker script `quartz/worker.ts`. Then, a work-stealing [workerpool](https://www.npmjs.com/package/workerpool) is then created and batches of 128 files are assigned to workers.
-      2. Each worker (or just the main thread if there is no concurrency) creates a [unified](https://github.com/unifiedjs/unified) parser based off of the plugins defined in the [[configuration]].
-      3. Parsing has three steps:
-         1. Read the file into a [vfile](https://github.com/vfile/vfile).
-         2. Applied plugin-defined text transformations over the content.
-         3. Slugify the file path and store it in the data for the file. See the page on [[paths]] for more details about how path logic works in Quartz (spoiler: its complicated).
-         4. Markdown parsing using [remark-parse](https://www.npmjs.com/package/remark-parse) (text to [mdast](https://github.com/syntax-tree/mdast)).
-         5. Apply plugin-defined Markdown-to-Markdown transformations.
-         6. Convert Markdown into HTML using [remark-rehype](https://github.com/remarkjs/remark-rehype) ([mdast](https://github.com/syntax-tree/mdast) to [hast](https://github.com/syntax-tree/hast)).
-         7. Apply plugin-defined HTML-to-HTML transformations.
-   4. Filter out unwanted content using plugins.
-   5. Emit files using plugins.
-      1. Gather all the static resources (e.g. external CSS, JS modules, etc.) each emitter plugin declares.
-      2. Emitters that emit HTML files do a bit of extra work here as they need to transform the [hast](https://github.com/syntax-tree/hast) produced in the parse step to JSX. This is done using [hast-util-to-jsx-runtime](https://github.com/syntax-tree/hast-util-to-jsx-runtime) with the [Preact](https://preactjs.com/) runtime. Finally, the JSX is rendered to HTML using [preact-render-to-string](https://github.com/preactjs/preact-render-to-string) which statically renders the JSX to HTML (i.e. doesn't care about `useState`, `useEffect`, or any other React/Preact interactive bits). Here, we also do a bunch of fun stuff like assemble the page [[layout]] from `quartz.layout.ts`, assemble all the inline scripts that actually get shipped to the client, and all the transpiled styles. The bulk of this logic can be found in `quartz/components/renderPage.tsx`. Other fun things of note:
-         1. CSS is minified and transformed using [Lightning CSS](https://github.com/parcel-bundler/lightningcss) to add vendor prefixes and do syntax lowering.
-         2. Scripts are split into `beforeDOMLoaded` and `afterDOMLoaded` and are inserted in the `<head>` and `<body>` respectively.
-      3. Finally, each emitter plugin is responsible for emitting and writing it's own emitted files to disk.
-   6. If the `--serve` flag was detected, we also set up another file watcher to detect content changes (only `.md` files). We keep a content map that tracks the parsed AST and plugin data for each slug and update this on file changes. Newly added or modified paths are rebuilt and added to the content map. Then, all the filters and emitters are run over the resulting content map. This file watcher is debounced with a threshold of 250ms. On success, we send a client refresh signal using the passed in callback function.
+1. 运行 `npx quartz build` 后,npm 会查看 `package.json` 找到指向 `./quartz/bootstrap-cli.mjs` 的 `bin` 入口。
+2. 这个文件顶部有一个 [shebang](<https://en.wikipedia.org/wiki/Shebang_(Unix)>) 行,告诉 npm 使用 Node 执行它。
+3. `bootstrap-cli.mjs` 负责以下几件事:
+   1. 使用 [yargs](http://yargs.js.org/) 解析命令行参数。
+   2. 使用 [esbuild](https://esbuild.github.io/) 将 Quartz 的其余部分(用 TypeScript 编写)转译和打包成普通的 JavaScript。这里的 `esbuild` 配置有点特殊,因为它还使用 [esbuild-sass-plugin v2](https://www.npmjs.com/package/esbuild-sass-plugin) 处理 `.scss` 文件导入。此外,我们使用自定义的 `esbuild` 插件来打包组件声明的"内联"客户端脚本(任何 `.inline.ts` 文件),该插件运行另一个 `esbuild` 实例,为浏览器而不是 `node` 打包。两种类型的模块都作为纯文本导入。
+   3. 如果设置了 `--serve`,运行本地预览服务器。这会启动两个服务器:
+      1. 一个 WebSocket 服务器在端口 3001 上处理热重载信号。它跟踪所有入站连接,并在检测到服务器端更改(内容或配置)时发送"rebuild"消息。
+      2. 一个 HTTP 文件服务器在用户定义的端口(通常是 8080)上提供实际的网站文件。
+   4. 如果设置了 `--serve` 标志,它还会启动一个文件监视器来检测源代码更改(例如任何 `.ts`、`.tsx`、`.scss` 或打包器文件)。当发生更改时,我们使用 esbuild 的 [rebuild API](https://esbuild.github.io/api/#rebuild) 重新构建模块(上面的步骤 2),这大大减少了构建时间。
+   5. 在转译主要的 Quartz 构建模块(`quartz/build.ts`)后,我们将其写入缓存文件 `.quartz-cache/transpiled-build.mjs`,然后使用 `await import(cacheFile)` 动态导入它。但是,我们需要非常聪明地处理如何破坏 Node 的[导入缓存](https://github.com/nodejs/modules/issues/307),所以我们添加一个随机查询字符串来欺骗 Node 认为它是一个新模块。不过,这确实会导致内存泄漏,所以我们只希望用户在单个会话中不要热重载他们的配置太多次 :)) (每次重载大约泄漏 ~350kB 内存)。导入模块后,我们调用它,传入我们之前解析的命令行参数以及一个回调函数来通知客户端刷新。
+4. 在 `build.ts` 中,我们首先手动安装源映射支持,以解决我们之前引入的查询字符串缓存破坏黑客。然后,我们开始处理内容:
+   1. 清理输出目录。
+   2. 递归地遍历 `content` 文件夹中的所有文件,遵循 `.gitignore`。
+   3. 解析 Markdown 文件。
+      1. Quartz 检测可用的线程数,如果有 >128 个内容需要解析(粗略的启发式),则选择生成工作线程。如果需要生成工作线程,它将再次调用 esbuild 来转译工作线程脚本 `quartz/worker.ts`。然后,创建一个工作窃取 [workerpool](https://www.npmjs.com/package/workerpool),并将 128 个文件的批次分配给工作线程。
+      2. 每个工作线程(或者如果没有并发,则只是主线程)根据 [[configuration]] 中定义的插件创建一个 [unified](https://github.com/unifiedjs/unified) 解析器。
+      3. 解析有三个步骤:
+         1. 将文件读入 [vfile](https://github.com/vfile/vfile)。
+         2. 对内容应用插件定义的文本转换。
+         3. 对文件路径进行 slugify 处理并将其存储在文件的数据中。有关 Quartz 中路径逻辑如何工作的更多详细信息,请参阅 [[paths]] 页面(剧透:它很复杂)。
+         4. 使用 [remark-parse](https://www.npmjs.com/package/remark-parse) 进行 Markdown 解析(文本到 [mdast](https://github.com/syntax-tree/mdast))。
+         5. 应用插件定义的 Markdown 到 Markdown 转换。
+         6. 使用 [remark-rehype](https://github.com/remarkjs/remark-rehype) 将 Markdown 转换为 HTML([mdast](https://github.com/syntax-tree/mdast) 到 [hast](https://github.com/syntax-tree/hast))。
+         7. 应用插件定义的 HTML 到 HTML 转换。
+   4. 使用插件过滤掉不需要的内容。
+   5. 使用插件发出文件。
+      1. 收集每个发射器插件声明的所有静态资源(例如外部 CSS、JS 模块等)。
+      2. 发出 HTML 文件的发射器在这里做了一些额外的工作,因为它们需要将解析步骤中产生的 [hast](https://github.com/syntax-tree/hast) 转换为 JSX。这是使用带有 [Preact](https://preactjs.com/) 运行时的 [hast-util-to-jsx-runtime](https://github.com/syntax-tree/hast-util-to-jsx-runtime) 完成的。最后,使用 [preact-render-to-string](https://github.com/preactjs/preact-render-to-string) 将 JSX 渲染为 HTML,它将 JSX 静态渲染为 HTML(即不关心 `useState`、`useEffect` 或任何其他 React/Preact 交互位)。在这里,我们还做了一些有趣的事情,比如从 `quartz.layout.ts` 组装页面 [[layout]],组装所有实际发送到客户端的内联脚本,以及所有转译的样式。这些逻辑的大部分可以在 `quartz/components/renderPage.tsx` 中找到。其他值得注意的事情:
+         1. CSS 使用 [Lightning CSS](https://github.com/parcel-bundler/lightningcss) 进行缩小和转换,以添加供应商前缀并进行语法降级。
+         2. 脚本分为 `beforeDOMLoaded` 和 `afterDOMLoaded`,分别插入到 `<head>` 和 `<body>` 中。
+      3. 最后,每个发射器插件负责发出和将其发出的文件写入磁盘。
+   6. 如果检测到 `--serve` 标志,我们还会设置另一个文件监视器来检测内容更改(仅限 `.md` 文件)。我们保持一个内容映射,跟踪每个 slug 的解析 AST 和插件数据,并在文件更改时更新此映射。新添加或修改的路径会重新构建并添加到内容映射中。然后,所有过滤器和发射器都在结果内容映射上运行。此文件监视器的防抖阈值为 250ms。成功后,我们使用传入的回调函数发送客户端刷新信号。
 
-## On the client
+## 在客户端
 
-1. The browser opens a Quartz page and loads the HTML. The `<head>` also links to page styles (emitted to `public/index.css`) and page-critical JS (emitted to `public/prescript.js`)
-2. Then, once the body is loaded, the browser loads the non-critical JS (emitted to `public/postscript.js`)
-3. Once the page is done loading, the page will then dispatch a custom synthetic browser event `"nav"`. This is used so client-side scripts declared by components can 'setup' anything that requires access to the page DOM.
-   1. If the [[SPA Routing|enableSPA option]] is enabled in the [[configuration]], this `"nav"` event is also fired on any client-navigation to allow for components to unregister and reregister any event handlers and state.
-   2. If it's not, we wire up the `"nav"` event to just be fired a single time after page load to allow for consistency across how state is setup across both SPA and non-SPA contexts.
+1. 浏览器打开 Quartz 页面并加载 HTML。`<head>` 还链接到页面样式(发出到 `public/index.css`)和页面关键 JS(发出到 `public/prescript.js`)
+2. 然后,一旦加载了 body,浏览器就会加载非关键 JS(发出到 `public/postscript.js`)
+3. 一旦页面加载完成,页面就会分派一个自定义合成浏览器事件 `"nav"`。这用于让组件声明的客户端脚本可以"设置"任何需要访问页面 DOM 的内容。
+   1. 如果在 [[configuration]] 中启用了 [[SPA Routing|enableSPA 选项]],这个 `"nav"` 事件也会在任何客户端导航时触发,以允许组件注销和重新注册任何事件处理程序和状态。
+   2. 如果没有启用,我们将 `"nav"` 事件连接到在页面加载后只触发一次,以确保在 SPA 和非 SPA 上下文中状态设置的一致性。
 
-The architecture and design of the plugin system was intentionally left pretty vague here as this is described in much more depth in the guide on [[making plugins|making your own plugin]].
+插件系统的架构和设计在这里故意留得很模糊,因为这在 [[making plugins|制作你自己的插件]] 指南中有更详细的描述。

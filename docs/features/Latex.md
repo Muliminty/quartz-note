@@ -4,13 +4,13 @@ tags:
   - feature/transformer
 ---
 
-Quartz uses [Katex](https://katex.org/) by default to typeset both inline and block math expressions at build time.
+Quartz 默认使用 [Katex](https://katex.org/) 在构建时排版内联和块数学表达式。
 
-## Syntax
+## 语法
 
-### Block Math
+### 块数学
 
-Block math can be rendered by delimiting math expression with `$$`.
+块数学可以通过用 `$$` 分隔数学表达式来渲染。
 
 ```
 $$
@@ -41,42 +41,41 @@ $$
 
 $$
 \begin{array}{rll}
-E \psi &= H\psi & \text{Expanding the Hamiltonian Operator} \\
-&= -\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2} \psi + \frac{1}{2}m\omega x^2 \psi & \text{Using the ansatz $\psi(x) = e^{-kx^2}f(x)$, hoping to cancel the $x^2$ term} \\
-&= -\frac{\hbar^2}{2m} [4k^2x^2f(x)+2(-2kx)f'(x) + f''(x)]e^{-kx^2} + \frac{1}{2}m\omega x^2 f(x)e^{-kx^2} &\text{Removing the $e^{-kx^2}$ term from both sides} \\
+E \psi &= H\psi & \text{展开哈密顿算子} \\
+&= -\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2} \psi + \frac{1}{2}m\omega x^2 \psi & \text{使用假设 $\psi(x) = e^{-kx^2}f(x)$,希望消除 $x^2$ 项} \\
+&= -\frac{\hbar^2}{2m} [4k^2x^2f(x)+2(-2kx)f'(x) + f''(x)]e^{-kx^2} + \frac{1}{2}m\omega x^2 f(x)e^{-kx^2} &\text{从两边移除 $e^{-kx^2}$ 项} \\
 & \Downarrow \\
-Ef(x) &= -\frac{\hbar^2}{2m} [4k^2x^2f(x)-4kxf'(x) + f''(x)] + \frac{1}{2}m\omega x^2 f(x) & \text{Choosing $k=\frac{im}{2}\sqrt{\frac{\omega}{\hbar}}$ to cancel the $x^2$ term, via $-\frac{\hbar^2}{2m}4k^2=\frac{1}{2}m \omega$} \\
+Ef(x) &= -\frac{\hbar^2}{2m} [4k^2x^2f(x)-4kxf'(x) + f''(x)] + \frac{1}{2}m\omega x^2 f(x) & \text{选择 $k=\frac{im}{2}\sqrt{\frac{\omega}{\hbar}}$ 来消除 $x^2$ 项,通过 $-\frac{\hbar^2}{2m}4k^2=\frac{1}{2}m \omega$} \\
 &= -\frac{\hbar^2}{2m} [-4kxf'(x) + f''(x)] \\
 \end{array}
 $$
 
 > [!warn]
-> Due to limitations in the [underlying parsing library](https://github.com/remarkjs/remark-math), block math in Quartz requires the `$$` delimiters to be on newlines like above.
+> 由于[底层解析库](https://github.com/remarkjs/remark-math)的限制,Quartz 中的块数学需要 `$$` 分隔符在新行上,如上所示。
 
-### Inline Math
+### 内联数学
 
-Similarly, inline math can be rendered by delimiting math expression with a single `$`. For example, `$e^{i\pi} = -1$` produces $e^{i\pi} = -1$
+类似地,内联数学可以通过用单个 `$` 分隔数学表达式来渲染。例如,`$e^{i\pi} = -1$` 生成 $e^{i\pi} = -1$
 
-### Escaping symbols
+### 转义符号
 
-There will be cases where you may have more than one `$` in a paragraph at once which may accidentally trigger MathJax/Katex.
+有时在一个段落中可能会有多个 `$`,这可能会意外触发 MathJax/Katex。
 
-To get around this, you can escape the dollar sign by doing `\$` instead.
+要解决这个问题,你可以通过使用 `\$` 来转义美元符号。
 
-For example:
+例如:
 
-- Incorrect: `I have $1 and you have $2` produces I have $1 and you have $2
-- Correct: `I have \$1 and you have \$2` produces I have \$1 and you have \$2
+- 错误: `我有 $1 而你有 $2` 生成 我有 $1 而你有 $2
+- 正确: `我有 \$1 而你有 \$2` 生成 我有 \$1 而你有 \$2
 
-### Using mhchem
+### 使用 mhchem
 
-Add the following import to the top of `quartz/plugins/transformers/latex.ts` (before all the other
-imports):
+在 `quartz/plugins/transformers/latex.ts` 顶部添加以下导入(在所有其他导入之前):
 
 ```ts title="quartz/plugins/transformers/latex.ts"
 import "katex/contrib/mhchem"
 ```
 
-## Customization
+## 自定义
 
-Latex parsing is a functionality of the [[plugins/Latex|Latex]] plugin. See the plugin page for customization options.
+LaTeX 解析是 [[plugins/Latex|Latex]] 插件的功能。有关自定义选项,请参阅插件页面。

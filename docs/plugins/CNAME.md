@@ -4,19 +4,31 @@ tags:
   - plugin/emitter
 ---
 
-This plugin emits a `CNAME` record that points your subdomain to the default domain of your site.
+CNAME 插件允许你为你的 Quartz 站点指定一个自定义域名。这对于在 GitHub Pages 上托管你的站点特别有用。
 
-If you want to use a custom domain name like `quartz.example.com` for the site, then this is needed.
+## 配置
 
-See [[hosting|Hosting]] for more information.
+```ts
+CNAME({
+  // 你想要使用的域名
+  name: "quartz.jzhao.xyz",
+})
+```
 
-> [!note]
-> For information on how to add, remove or configure plugins, see the [[configuration#Plugins|Configuration]] page.
+## 使用方法
 
-This plugin has no configuration options.
+这个插件会在你的站点的根目录下创建一个 `CNAME` 文件,其中包含你指定的域名。这个文件告诉 GitHub Pages 将你的站点重定向到你的自定义域名。
+
+要使用自定义域名,你需要:
+
+1. 在你的 DNS 提供商处添加一个 CNAME 记录,指向 `<username>.github.io`
+2. 在你的 Quartz 配置中添加 CNAME 插件
+3. 部署你的站点
+
+更多信息请参见 [GitHub Pages 文档](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)。
 
 ## API
 
-- Category: Emitter
-- Function name: `Plugin.CNAME()`.
-- Source: [`quartz/plugins/emitters/cname.ts`](https://github.com/jackyzha0/quartz/blob/v4/quartz/plugins/emitters/cname.ts).
+- 类别: Emitter
+- 函数名称: `Plugin.CNAME()`
+- 源代码: [`quartz/plugins/emitters/cname.ts`](https://github.com/jackyzha0/quartz/blob/v4/quartz/plugins/emitters/cname.ts)

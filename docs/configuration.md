@@ -1,13 +1,13 @@
 ---
-title: Configuration
+title: 配置
 ---
 
-Quartz is meant to be extremely configurable, even if you don't know any coding. Most of the configuration you should need can be done by just editing `quartz.config.ts` or changing [[layout|the layout]] in `quartz.layout.ts`.
+Quartz 旨在具有极强的可配置性,即使你不懂任何编程。大多数配置只需编辑 `quartz.config.ts` 或在 `quartz.layout.ts` 中更改[[layout|布局]]即可完成。
 
 > [!tip]
-> If you edit Quartz configuration using a text-editor that has TypeScript language support like VSCode, it will warn you when you you've made an error in your configuration, helping you avoid configuration mistakes!
+> 如果你使用具有 TypeScript 语言支持的文本编辑器(如 VSCode)来编辑 Quartz 配置,当你在配置中出错时它会警告你,帮助你避免配置错误!
 
-The configuration of Quartz can be broken down into two main parts:
+Quartz 的配置可以分为两个主要部分:
 
 ```ts title="quartz.config.ts"
 const config: QuartzConfig = {
@@ -16,50 +16,49 @@ const config: QuartzConfig = {
 }
 ```
 
-## General Configuration
+## 通用配置
 
-This part of the configuration concerns anything that can affect the whole site. The following is a list breaking down all the things you can configure:
+这部分配置涉及可能影响整个站点的任何内容。以下是所有可配置内容的列表:
 
-- `pageTitle`: title of the site. This is also used when generating the [[RSS Feed]] for your site.
-- `pageTitleSuffix`: a string added to the end of the page title. This only applies to the browser tab title, not the title shown at the top of the page.
-- `enableSPA`: whether to enable [[SPA Routing]] on your site.
-- `enablePopovers`: whether to enable [[popover previews]] on your site.
-- `analytics`: what to use for analytics on your site. Values can be
-  - `null`: don't use analytics;
-  - `{ provider: 'google', tagId: '<your-google-tag>' }`: use Google Analytics;
-  - `{ provider: 'plausible' }` (managed) or `{ provider: 'plausible', host: '<your-plausible-host>' }` (self-hosted): use [Plausible](https://plausible.io/);
-  - `{ provider: 'umami', host: '<your-umami-host>', websiteId: '<your-umami-website-id>' }`: use [Umami](https://umami.is/);
-  - `{ provider: 'goatcounter', websiteId: 'my-goatcounter-id' }` (managed) or `{ provider: 'goatcounter', websiteId: 'my-goatcounter-id', host: 'my-goatcounter-domain.com', scriptSrc: 'https://my-url.to/counter.js' }` (self-hosted) use [GoatCounter](https://goatcounter.com);
-  - `{ provider: 'posthog', apiKey: '<your-posthog-project-apiKey>', host: '<your-posthog-host>' }`: use [Posthog](https://posthog.com/);
-  - `{ provider: 'tinylytics', siteId: '<your-site-id>' }`: use [Tinylytics](https://tinylytics.app/);
-  - `{ provider: 'cabin' }` or `{ provider: 'cabin', host: 'https://cabin.example.com' }` (custom domain): use [Cabin](https://withcabin.com);
-  - `{provider: 'clarity', projectId: '<your-clarity-id-code' }`: use [Microsoft clarity](https://clarity.microsoft.com/). The project id can be found on top of the overview page.
-- `locale`: used for [[i18n]] and date formatting
-- `baseUrl`: this is used for sitemaps and RSS feeds that require an absolute URL to know where the canonical 'home' of your site lives. This is normally the deployed URL of your site (e.g. `quartz.jzhao.xyz` for this site). Do not include the protocol (i.e. `https://`) or any leading or trailing slashes.
-  - This should also include the subpath if you are [[hosting]] on GitHub pages without a custom domain. For example, if my repository is `jackyzha0/quartz`, GitHub pages would deploy to `https://jackyzha0.github.io/quartz` and the `baseUrl` would be `jackyzha0.github.io/quartz`.
-  - Note that Quartz 4 will avoid using this as much as possible and use relative URLs whenever it can to make sure your site works no matter _where_ you end up actually deploying it.
-- `ignorePatterns`: a list of [glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) patterns that Quartz should ignore and not search through when looking for files inside the `content` folder. See [[private pages]] for more details.
-- `defaultDateType`: whether to use created, modified, or published as the default date to display on pages and page listings.
-- `theme`: configure how the site looks.
-  - `cdnCaching`: If `true` (default), use Google CDN to cache the fonts. This will generally will be faster. Disable (`false`) this if you want Quartz to download the fonts to be self-contained.
-  - `typography`: what fonts to use. Any font available on [Google Fonts](https://fonts.google.com/) works here.
-    - `header`: Font to use for headers
-    - `code`: Font for inline and block quotes.
-    - `body`: Font for everything
-  - `colors`: controls the theming of the site.
-    - `light`: page background
-    - `lightgray`: borders
-    - `gray`: graph links, heavier borders
-    - `darkgray`: body text
-    - `dark`: header text and icons
-    - `secondary`: link colour, current [[graph view|graph]] node
-    - `tertiary`: hover states and visited [[graph view|graph]] nodes
-    - `highlight`: internal link background, highlighted text, [[syntax highlighting|highlighted lines of code]]
-    - `textHighlight`: markdown highlighted text background
+- `pageTitle`: 站点标题。这也用于生成你网站的[[RSS Feed|RSS 订阅]]。
+- `pageTitleSuffix`: 添加到页面标题末尾的字符串。这只适用于浏览器标签标题,不适用于页面顶部显示的标题。
+- `enableSPA`: 是否在你的站点上启用[[SPA Routing|单页应用路由]]。
+- `enablePopovers`: 是否在你的站点上启用[[popover previews|弹出预览]]。
+- `analytics`: 在你的站点上使用什么分析工具。值可以是
+  - `null`: 不使用分析;
+  - `{ provider: 'google', tagId: '<your-google-tag>' }`: 使用 Google Analytics;
+  - `{ provider: 'plausible' }` (托管)或 `{ provider: 'plausible', host: '<your-plausible-host>' }` (自托管): 使用 [Plausible](https://plausible.io/);
+  - `{ provider: 'umami', host: '<your-umami-host>', websiteId: '<your-umami-website-id>' }`: 使用 [Umami](https://umami.is/);
+  - `{ provider: 'goatcounter', websiteId: 'my-goatcounter-id' }` (托管)或 `{ provider: 'goatcounter', websiteId: 'my-goatcounter-id', host: 'my-goatcounter-domain.com', scriptSrc: 'https://my-url.to/counter.js' }` (自托管) 使用 [GoatCounter](https://goatcounter.com);
+  - `{ provider: 'posthog', apiKey: '<your-posthog-project-apiKey>', host: '<your-posthog-host>' }`: 使用 [Posthog](https://posthog.com/);
+  - `{ provider: 'tinylytics', siteId: '<your-site-id>' }`: 使用 [Tinylytics](https://tinylytics.app/);
+  - `{ provider: 'cabin' }` 或 `{ provider: 'cabin', host: 'https://cabin.example.com' }` (自定义域名): 使用 [Cabin](https://withcabin.com);
+  - `{provider: 'clarity', projectId: '<your-clarity-id-code' }`: 使用 [Microsoft clarity](https://clarity.microsoft.com/)。项目 ID 可以在概览页面顶部找到。
+- `locale`: 用于[[i18n|国际化]]和日期格式化
+- `baseUrl`: 这用于需要知道你的站点"主页"所在位置的绝对 URL 的站点地图和 RSS 订阅。这通常是你的站点的部署 URL(例如,这个站点是 `quartz.jzhao.xyz`)。不要包含协议(即 `https://`)或任何前导或尾随斜杠。
+  - 如果你在没有自定义域名的情况下在 GitHub pages 上[[hosting|托管]],这还应该包含子路径。例如,如果我的仓库是 `jackyzha0/quartz`,GitHub pages 会部署到 `https://jackyzha0.github.io/quartz`,那么 `baseUrl` 应该是 `jackyzha0.github.io/quartz`。
+  - 请注意,Quartz 4 将尽可能避免使用这个,并在可能的情况下使用相对 URL,以确保你的站点无论最终部署在哪里都能正常工作。
+- `ignorePatterns`: 当在 `content` 文件夹中查找文件时,Quartz 应该忽略且不搜索的 [glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) 模式列表。更多详情请参见[[private pages|私有页面]]。
+- `defaultDateType`: 是否使用创建、修改或发布作为在页面和页面列表上显示的默认日期。
+- `theme`: 配置站点的外观。
+  - `cdnCaching`: 如果为 `true`(默认),使用 Google CDN 缓存字体。这通常会更快。如果你想让 Quartz 下载字体以实现自包含,禁用(`false`)这个。
+  - `typography`: 使用什么字体。这里可以使用 [Google Fonts](https://fonts.google.com/) 上的任何字体。
+    - `header`: 用于标题的字体
+    - `code`: 用于内联和块引用的字体。
+    - `body`: 用于其他所有内容的字体
+  - `colors`: 控制站点的主题。
+    - `light`: 页面背景
+    - `lightgray`: 边框
+    - `gray`: 图表链接,较重的边框
+    - `darkgray`: 正文文本
+    - `dark`: 标题文本和图标
+    - `secondary`: 链接颜色,当前[[graph view|图表]]节点
+    - `tertiary`: 悬停状态和已访问的[[graph view|图表]]节点
+    - `highlight`: 内部链接背景,高亮文本,[[syntax highlighting|高亮代码行]]
 
-## Plugins
+## 插件
 
-You can think of Quartz plugins as a series of transformations over content.
+你可以把 Quartz 插件想象成一系列对内容的转换。
 
 ![[quartz transform pipeline.png]]
 
@@ -71,16 +70,16 @@ plugins: {
 }
 ```
 
-- [[tags/plugin/transformer|Transformers]] **map** over content (e.g. parsing frontmatter, generating a description)
-- [[tags/plugin/filter|Filters]] **filter** content (e.g. filtering out drafts)
-- [[tags/plugin/emitter|Emitters]] **reduce** over content (e.g. creating an RSS feed or pages that list all files with a specific tag)
+- [[tags/plugin/transformer|转换器]]对内容进行**映射**(例如解析前置元数据,生成描述)
+- [[tags/plugin/filter|过滤器]]**过滤**内容(例如过滤掉草稿)
+- [[tags/plugin/emitter|发射器]]对内容进行**归约**(例如创建 RSS 订阅或列出所有具有特定标签的文件的页面)
 
-You can customize the behaviour of Quartz by adding, removing and reordering plugins in the `transformers`, `filters` and `emitters` fields.
+你可以通过在 `transformers`、`filters` 和 `emitters` 字段中添加、删除和重新排序插件来自定义 Quartz 的行为。
 
 > [!note]
-> Each node is modified by every transformer _in order_. Some transformers are position sensitive, so you may need to pay particular attention to whether they need to come before or after certain other plugins.
+> 每个节点都会按_顺序_被每个转换器修改。一些转换器对位置敏感,所以你可能需要特别注意它们是否需要在某些其他插件之前或之后。
 
-You should take care to add the plugin to the right entry corresponding to its plugin type. For example, to add the [[ExplicitPublish]] plugin (a [[tags/plugin/filter|Filter]]), you would add the following line:
+你应该注意将插件添加到与其插件类型对应的正确条目中。例如,要添加 [[ExplicitPublish]] 插件(一个[[tags/plugin/filter|过滤器]]),你需要添加以下行:
 
 ```ts title="quartz.config.ts"
 filters: [
@@ -90,21 +89,21 @@ filters: [
 ],
 ```
 
-To remove a plugin, you should remove all occurrences of it in the `quartz.config.ts`.
+要删除插件,你应该删除 `quartz.config.ts` 中该插件的所有出现。
 
-To customize plugins further, some plugins may also have their own configuration settings that you can pass in. If you do not pass in a configuration, the plugin will use its default settings.
+要进一步自定义插件,一些插件可能还有自己的配置设置,你可以传入这些设置。如果你不传入配置,插件将使用其默认设置。
 
-For example, the [[plugins/Latex|Latex]] plugin allows you to pass in a field specifying the `renderEngine` to choose between Katex and MathJax.
+例如,[[plugins/Latex|Latex]] 插件允许你传入一个指定 `renderEngine` 的字段,以在 Katex 和 MathJax 之间选择。
 
 ```ts title="quartz.config.ts"
 transformers: [
-  Plugin.FrontMatter(), // use default options
-  Plugin.Latex({ renderEngine: "katex" }), // set some custom options
+  Plugin.FrontMatter(), // 使用默认选项
+  Plugin.Latex({ renderEngine: "katex" }), // 设置一些自定义选项
 ]
 ```
 
-Some plugins are included by default in the [`quartz.config.ts`](https://github.com/jackyzha0/quartz/blob/v4/quartz.config.ts), but there are more available.
+一些插件默认包含在 [`quartz.config.ts`](https://github.com/jackyzha0/quartz/blob/v4/quartz.config.ts) 中,但还有更多可用的。
 
-You can see a list of all plugins and their configuration options [[tags/plugin|here]].
+你可以在[[tags/plugin|这里]]看到所有插件及其配置选项的列表。
 
-If you'd like to make your own plugins, see the [[making plugins|making custom plugins]] guide.
+如果你想制作自己的插件,请参阅[[making plugins|制作自定义插件]]指南。

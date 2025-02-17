@@ -1,35 +1,35 @@
 ---
-title: Callouts
+title: 标注
 tags:
   - feature/transformer
 ---
 
-Quartz supports the same Admonition-callout syntax as Obsidian.
+Quartz 支持与 Obsidian 相同的 Admonition-callout 语法。
 
-This includes
+这包括:
 
-- 12 Distinct callout types (each with several aliases)
-- Collapsable callouts
+- 12 种不同的标注类型(每种都有几个别名)
+- 可折叠的标注
 
 ```
-> [!info] Title
-> This is a callout!
+> [!info] 标题
+> 这是一个标注!
 ```
 
-See [documentation on supported types and syntax here](https://help.obsidian.md/Editing+and+formatting/Callouts).
+查看[这里的文档了解支持的类型和语法](https://help.obsidian.md/Editing+and+formatting/Callouts)。
 
 > [!warning]
-> Wondering why callouts may not be showing up even if you have them enabled? You may need to reorder your plugins so that [[ObsidianFlavoredMarkdown]] is _after_ [[SyntaxHighlighting]].
+> 想知道为什么标注可能没有显示,即使你已经启用了它们?你可能需要重新排序你的插件,使 [[ObsidianFlavoredMarkdown]] 在 [[SyntaxHighlighting]] _之后_。
 
-## Customization
+## 自定义
 
-The callouts are a functionality of the [[ObsidianFlavoredMarkdown]] plugin. See the plugin page for how to enable or disable them.
+标注是 [[ObsidianFlavoredMarkdown]] 插件的功能。查看插件页面了解如何启用或禁用它们。
 
-You can edit the icons by customizing `quartz/styles/callouts.scss`.
+你可以通过自定义 `quartz/styles/callouts.scss` 来编辑图标。
 
-### Add custom callouts
+### 添加自定义标注
 
-By default, custom callouts are handled by applying the `note` style. To make fancy ones, you have to add these lines to `custom.scss`.
+默认情况下,自定义标注会应用 `note` 样式。要制作漂亮的标注,你需要在 `custom.scss` 中添加这些行。
 
 ```scss title="quartz/styles/custom.scss"
 .callout {
@@ -37,60 +37,60 @@ By default, custom callouts are handled by applying the `note` style. To make fa
     --color: #customcolor;
     --border: #custombordercolor;
     --bg: #custombg;
-    --callout-icon: url("data:image/svg+xml; utf8, <custom formatted svg>"); //SVG icon code
+    --callout-icon: url("data:image/svg+xml; utf8, <custom formatted svg>"); //SVG 图标代码
   }
 }
 ```
 
 > [!warning]
-> Don't forget to ensure that the SVG is URL encoded before putting it in the CSS. You can use tools like [this one](https://yoksel.github.io/url-encoder/) to help you do that.
+> 不要忘记确保 SVG 在放入 CSS 之前已经进行了 URL 编码。你可以使用[这样的工具](https://yoksel.github.io/url-encoder/)来帮助你完成这个工作。
 
-## Showcase
+## 展示
 
 > [!info]
-> Default title
+> 默认标题
 
-> [!question]+ Can callouts be _nested_?
+> [!question]+ 标注可以_嵌套_吗?
 >
-> > [!todo]- Yes!, they can. And collapsed!
+> > [!todo]- 是的!它们可以。而且可以折叠!
 > >
-> > > [!example] You can even use multiple layers of nesting.
+> > > [!example] 你甚至可以使用多层嵌套。
 
 > [!note]
-> Aliases: "note"
+> 别名: "note"
 
 > [!abstract]
-> Aliases: "abstract", "summary", "tldr"
+> 别名: "abstract", "summary", "tldr"
 
 > [!info]
-> Aliases: "info"
+> 别名: "info"
 
 > [!todo]
-> Aliases: "todo"
+> 别名: "todo"
 
 > [!tip]
-> Aliases: "tip", "hint", "important"
+> 别名: "tip", "hint", "important"
 
 > [!success]
-> Aliases: "success", "check", "done"
+> 别名: "success", "check", "done"
 
 > [!question]
-> Aliases: "question", "help", "faq"
+> 别名: "question", "help", "faq"
 
 > [!warning]
-> Aliases: "warning", "attention", "caution"
+> 别名: "warning", "attention", "caution"
 
 > [!failure]
-> Aliases: "failure", "missing", "fail"
+> 别名: "failure", "missing", "fail"
 
 > [!danger]
-> Aliases: "danger", "error"
+> 别名: "danger", "error"
 
 > [!bug]
-> Aliases: "bug"
+> 别名: "bug"
 
 > [!example]
-> Aliases: "example"
+> 别名: "example"
 
 > [!quote]
-> Aliases: "quote", "cite"
+> 别名: "quote", "cite"

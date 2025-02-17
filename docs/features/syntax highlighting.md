@@ -1,143 +1,67 @@
 ---
-title: Syntax Highlighting
+title: 语法高亮
 tags:
   - feature/transformer
 ---
 
-Syntax highlighting in Quartz is completely done at build-time. This means that Quartz only ships pre-calculated CSS to highlight the right words so there is no heavy client-side bundle that does the syntax highlighting.
+Quartz 支持使用 [Prism.js](https://prismjs.com/) 进行代码块的语法高亮。
 
-And, unlike some client-side highlighters, it has a full TextMate parser grammar instead of using Regexes, allowing for highly accurate code highlighting.
+## 语法
 
-In short, it generates HTML that looks exactly like your code in an editor like VS Code. Under the hood, it's powered by [Rehype Pretty Code](https://rehype-pretty-code.netlify.app/) which uses [Shiki](https://github.com/shikijs/shiki).
+要启用语法高亮,在代码块中指定语言:
 
-> [!warning]
-> Syntax highlighting does have an impact on build speed if you have a lot of code snippets in your notes.
-
-## Formatting
-
-Text inside `backticks` on a line will be formatted like code.
-
+````markdown
+```js
+// 一些 JavaScript 代码
+const hello = "world"
+console.log(hello)
+```
 ````
-```ts
-export function trimPathSuffix(fp: string): string {
-  fp = clientSideSlug(fp)
-  let [cleanPath, anchor] = fp.split("#", 2)
-  anchor = anchor === undefined ? "" : "#" + anchor
 
-  return cleanPath + anchor
+这将生成:
+
+```js
+// 一些 JavaScript 代码
+const hello = "world"
+console.log(hello)
+```
+
+## 支持的语言
+
+默认情况下,Quartz 支持以下语言的语法高亮:
+
+- JavaScript/JSX
+- TypeScript/TSX
+- CSS
+- HTML
+- Markdown
+- Bash/Shell
+- Python
+- LaTeX
+- YAML
+- TOML
+- Git
+- Diff
+- SQL
+
+## 自定义
+
+语法高亮是 [[plugins/SyntaxHighlighting|SyntaxHighlighting]] 插件的功能。查看插件页面了解如何启用或禁用它。
+
+要添加对其他语言的支持,你需要:
+
+1. 在 `quartz/plugins/transformers/syntax.ts` 中导入语言:
+
+```ts title="quartz/plugins/transformers/syntax.ts"
+import "prismjs/components/prism-python"
+import "prismjs/components/prism-latex"
+// 等等...
+```
+
+2. 在 `quartz/styles/syntax.scss` 中添加语言的主题:
+
+```scss title="quartz/styles/syntax.scss"
+.token.language-python {
+  // 你的主题样式
 }
 ```
-````
-
-```ts
-export function trimPathSuffix(fp: string): string {
-  fp = clientSideSlug(fp)
-  let [cleanPath, anchor] = fp.split("#", 2)
-  anchor = anchor === undefined ? "" : "#" + anchor
-
-  return cleanPath + anchor
-}
-```
-
-### Titles
-
-Add a file title to your code block, with text inside double quotes (`""`):
-
-````
-```js title="..."
-
-```
-````
-
-```ts title="quartz/path.ts"
-export function trimPathSuffix(fp: string): string {
-  fp = clientSideSlug(fp)
-  let [cleanPath, anchor] = fp.split("#", 2)
-  anchor = anchor === undefined ? "" : "#" + anchor
-
-  return cleanPath + anchor
-}
-```
-
-### Line highlighting
-
-Place a numeric range inside `{}`.
-
-````
-```js {1-3,4}
-
-```
-````
-
-```ts {2-3,6}
-export function trimPathSuffix(fp: string): string {
-  fp = clientSideSlug(fp)
-  let [cleanPath, anchor] = fp.split("#", 2)
-  anchor = anchor === undefined ? "" : "#" + anchor
-
-  return cleanPath + anchor
-}
-```
-
-### Word highlighting
-
-A series of characters, like a literal regex.
-
-````
-```js /useState/
-const [age, setAge] = useState(50);
-const [name, setName] = useState('Taylor');
-```
-````
-
-```js /useState/
-const [age, setAge] = useState(50)
-const [name, setName] = useState("Taylor")
-```
-
-### Inline Highlighting
-
-Append {:lang} to the end of inline code to highlight it like a regular code block.
-
-```
-This is an array `[1, 2, 3]{:js}` of numbers 1 through 3.
-```
-
-This is an array `[1, 2, 3]{:js}` of numbers 1 through 3.
-
-### Line numbers
-
-Syntax highlighting has line numbers configured automatically. If you want to start line numbers at a specific number, use `showLineNumbers{number}`:
-
-````
-```js showLineNumbers{number}
-
-```
-````
-
-```ts showLineNumbers{20}
-export function trimPathSuffix(fp: string): string {
-  fp = clientSideSlug(fp)
-  let [cleanPath, anchor] = fp.split("#", 2)
-  anchor = anchor === undefined ? "" : "#" + anchor
-
-  return cleanPath + anchor
-}
-```
-
-### Escaping code blocks
-
-You can format a codeblock inside of a codeblock by wrapping it with another level of backtick fences that has one more backtick than the previous fence.
-
-`````
-````
-```js /useState/
-const [age, setAge] = useState(50);
-const [name, setName] = useState('Taylor');
-```
-````
-`````
-
-## Customization
-
-Syntax highlighting is a functionality of the [[SyntaxHighlighting]] plugin. See the plugin page for customization options.

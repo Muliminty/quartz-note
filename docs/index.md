@@ -1,14 +1,14 @@
 ---
-title: Welcome to Quartz 4
+title: 欢迎使用 Quartz 4
 ---
 
-Quartz is a fast, batteries-included static-site generator that transforms Markdown content into fully functional websites. Thousands of students, developers, and teachers are [[showcase|already using Quartz]] to publish personal notes, websites, and [digital gardens](https://jzhao.xyz/posts/networked-thought) to the web.
+Quartz 是一个快速、功能齐全的静态网站生成器，它可以将 Markdown 内容转换为完整的网站。成千上万的学生、开发者和教师已经在 [[showcase|使用 Quartz]] 来发布个人笔记、网站和 [数字花园](https://jzhao.xyz/posts/networked-thought) 到网络上。
 
-## 🪴 Get Started
+## 🪴 快速开始
 
-Quartz requires **at least [Node](https://nodejs.org/) v20** and `npm` v9.3.1 to function correctly. Ensure you have this installed on your machine before continuing.
+Quartz 需要 **至少 [Node](https://nodejs.org/) v20** 和 `npm` v9.3.1 才能正常运行。在继续之前，请确保你的计算机已安装这些版本。
 
-Then, in your terminal of choice, enter the following commands line by line:
+然后，在你的终端中，逐行输入以下命令：
 
 ```shell
 git clone https://github.com/jackyzha0/quartz.git
@@ -17,30 +17,30 @@ npm i
 npx quartz create
 ```
 
-This will guide you through initializing your Quartz with content. Once you've done so, see how to:
+这将引导你初始化 Quartz 并添加内容。完成后，你可以了解如何：
 
-1. [[authoring content|Writing content]] in Quartz
-2. [[configuration|Configure]] Quartz's behaviour
-3. Change Quartz's [[layout]]
-4. [[build|Build and preview]] Quartz
-5. Sync your changes with [[setting up your GitHub repository|GitHub]]
-6. [[hosting|Host]] Quartz online
+1. 在 Quartz 中 [[authoring content|撰写内容]]
+2. [[configuration|配置]] Quartz 的行为
+3. 更改 Quartz 的 [[layout|布局]]
+4. [[build|构建和预览]] Quartz
+5. 通过 [[setting up your GitHub repository|GitHub]] 同步你的更改
+6. [[hosting|托管]] Quartz 到线上
 
-If you prefer instructions in a video format you can try following Nicole van der Hoeven's
-[video guide on how to set up Quartz!](https://www.youtube.com/watch?v=6s6DT1yN4dw&t=227s)
+如果你更喜欢视频教程，可以观看 Nicole van der Hoeven 的
+[Quartz 设置视频指南](https://www.youtube.com/watch?v=6s6DT1yN4dw&t=227s)。
 
-## 🔧 Features
+## 🔧 功能
 
-- [[Obsidian compatibility]], [[full-text search]], [[graph view]], note transclusion, [[wikilinks]], [[backlinks]], [[features/Latex|Latex]], [[syntax highlighting]], [[popover previews]], [[Docker Support]], [[i18n|internationalization]], [[comments]] and [many more](./features) right out of the box
-- Hot-reload for both configuration and content
-- Simple JSX layouts and [[creating components|page components]]
-- [[SPA Routing|Ridiculously fast page loads]] and tiny bundle sizes
-- Fully-customizable parsing, filtering, and page generation through [[making plugins|plugins]]
+- [[Obsidian 兼容性]]、[[全文搜索]]、[[图谱视图]]、笔记嵌入、[[维基链接]]、[[反向链接]]、[[features/Latex|Latex]]、[[代码高亮]]、[[弹出预览]]、[[Docker 支持]]、[[i18n|国际化]]、[[评论]]以及[更多功能](./features)，开箱即用  
+- 配置和内容的热重载  
+- 简单的 JSX 布局和 [[creating components|页面组件]]  
+- [[SPA Routing|超快的页面加载速度]] 和极小的打包体积  
+- 通过 [[making plugins|插件]] 实现完全可自定义的解析、过滤和页面生成  
 
-For a comprehensive list of features, visit the [features page](/features). You can read more about the _why_ behind these features on the [[philosophy]] page and a technical overview on the [[architecture]] page.
+想要查看完整的功能列表，请访问 [功能页面](/features)。你还可以在 [[philosophy|理念]] 页面了解这些功能背后的设计理念，并在 [[architecture|架构]] 页面查看技术概览。
 
-### 🚧 Troubleshooting + Updating
+### 🚧 故障排除 + 更新
 
-Having trouble with Quartz? Try searching for your issue using the search feature. If you haven't already, [[upgrading|upgrade]] to the newest version of Quartz to see if this fixes your issue.
+在使用 Quartz 时遇到问题？请尝试使用搜索功能查找你的问题。如果你还没有这样做，可以 [[upgrading|升级]] 到 Quartz 的最新版本，看看是否能解决问题。
 
-If you're still having trouble, feel free to [submit an issue](https://github.com/jackyzha0/quartz/issues) if you feel you found a bug or ask for help in our [Discord Community](https://discord.gg/cRFFHYye7t).
+如果问题仍然存在，你可以在 [GitHub 提交问题](https://github.com/jackyzha0/quartz/issues)，如果你认为发现了一个 Bug，或者在我们的 [Discord 社区](https://discord.gg/cRFFHYye7t) 请求帮助。

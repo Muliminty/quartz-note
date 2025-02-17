@@ -1,36 +1,36 @@
 ---
-title: "Breadcrumbs"
+title: "面包屑导航"
 tags:
   - component
 ---
 
-Breadcrumbs provide a way to navigate a hierarchy of pages within your site using a list of its parent folders.
+面包屑导航提供了一种使用其父文件夹列表来导航站点页面层次结构的方式。
 
-By default, the element at the very top of your page is the breadcrumb navigation bar (can also be seen at the top on this page!).
+默认情况下,页面最顶部的元素是面包屑导航栏(也可以在本页顶部看到!)。
 
-## Customization
+## 自定义
 
-Most configuration can be done by passing in options to `Component.Breadcrumbs()`.
+大多数配置可以通过向 `Component.Breadcrumbs()` 传入选项来完成。
 
-For example, here's what the default configuration looks like:
+例如,这是默认配置的样子:
 
 ```typescript title="quartz.layout.ts"
 Component.Breadcrumbs({
-  spacerSymbol: "❯", // symbol between crumbs
-  rootName: "Home", // name of first/root element
-  resolveFrontmatterTitle: true, // whether to resolve folder names through frontmatter titles
-  hideOnRoot: true, // whether to hide breadcrumbs on root `index.md` page
-  showCurrentPage: true, // whether to display the current page in the breadcrumbs
+  spacerSymbol: "❯", // 面包屑之间的符号
+  rootName: "Home", // 第一个/根元素的名称
+  resolveFrontmatterTitle: true, // 是否通过前置元数据标题解析文件夹名称
+  hideOnRoot: true, // 是否在根 `index.md` 页面隐藏面包屑
+  showCurrentPage: true, // 是否在面包屑中显示当前页面
 })
 ```
 
-When passing in your own options, you can omit any or all of these fields if you'd like to keep the default value for that field.
+当传入你自己的选项时,如果你想保持某个字段的默认值,可以省略任何或所有这些字段。
 
-You can also adjust where the breadcrumbs will be displayed by adjusting the [[layout]] (moving `Component.Breadcrumbs()` up or down)
+你也可以通过调整[[layout|布局]](上下移动 `Component.Breadcrumbs()`)来调整面包屑的显示位置。
 
-Want to customize it even more?
+想要更多自定义?
 
-- Removing breadcrumbs: delete all usages of `Component.Breadcrumbs()` from `quartz.layout.ts`.
-- Component: `quartz/components/Breadcrumbs.tsx`
-- Style: `quartz/components/styles/breadcrumbs.scss`
-- Script: inline at `quartz/components/Breadcrumbs.tsx`
+- 移除面包屑: 从 `quartz.layout.ts` 中删除所有 `Component.Breadcrumbs()` 的使用。
+- 组件: `quartz/components/Breadcrumbs.tsx`
+- 样式: `quartz/components/styles/breadcrumbs.scss`
+- 脚本: 内联于 `quartz/components/Breadcrumbs.tsx`
