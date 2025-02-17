@@ -9,7 +9,7 @@ import * as Plugin from "./quartz/plugins"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "🪴 Quartz 4.0", // 网站的主标题
+    pageTitle: "muliminty note", // 网站的主标题
     pageTitleSuffix: "", // 页面标题的后缀，如果有的话
     enableSPA: true, // 启用单页应用模式
     enablePopovers: true, // 启用弹出框以显示附加信息
