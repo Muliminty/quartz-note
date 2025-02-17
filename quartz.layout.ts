@@ -87,16 +87,16 @@ export const defaultContentPageLayout: PageLayout = {
 
   // 左侧区域，通常是侧边栏，包含一些常见的导航组件
   left: [
-    // Component.PageTitle(),             // 页面标题
-    // Component.MobileOnly(Component.Spacer()), // 仅在移动端显示的间隔组件
-    // Component.Search(),                // 搜索框
-    // Component.Darkmode(),              // 黑暗模式切换
+    Component.PageTitle(),             // 页面标题
+    Component.MobileOnly(Component.Spacer()), // 仅在移动端显示的间隔组件
+    Component.Search(),                // 搜索框
+    Component.Darkmode(),              // 黑暗模式切换
     Component.Explorer(),              // 页面资源或文件的浏览器组件
   ],
 
   // 右侧区域，通常显示相关内容或推荐内容
   right: [
-    // Component.Graph(),                 // 显示图表的组件
+    Component.Graph(),                 // 显示图表的组件
     Component.DesktopOnly(Component.TableOfContents()), // 仅桌面端显示的目录（文章目录）
     // Component.Backlinks(),             // 反向链接组件
   ],
